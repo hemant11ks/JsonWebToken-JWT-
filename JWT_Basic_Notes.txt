@@ -1,0 +1,93 @@
+JWT:
+JSON Web Tokens are an open, industry standard RFC 7519 method for representing claims securely between two parties.
+JWT.IO allows you to decode, verify and generate JWT.
+
+->Public Key cryptography.
+->Private Key cryptography (JWT works)
+->Stateless : JWT is stateless (State is not stored in data base or file)
+->Stateful: (State are stored in data base or file)
+
+In JWT who has the token than he will be the authorized person.
+ 
+JSON web token:
+-> JWT has three component divided by '.'
+
+
+Example of JWT string:
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.                                         ->First component decides the algorithm used
+eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.   ->Second component define the information
+SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c                                   ->Third component define the manipulation in data
+
+
+HEADER:ALGORITHM & TOKEN TYPE
+{
+  "alg": "HS256",
+  "typ": "JWT"
+}
+
+
+PAYLOAD:DATA
+{
+  "sub": "1234567890",
+  "name": "John Doe",
+  "iat": 1516239022
+}
+
+
+VERIFY SIGNATURE
+HMACSHA256(
+  base64UrlEncode(header) + "." +
+  base64UrlEncode(payload),
+  
+your-256-bit-secret
+
+)
+
+
+Note: When a token is expires and client request the server, then server throw 401 code(may differ) to client. When a client has the access token 
+he can request for new refresh code which is stored in the database.
+
+JWT vs Session:
+
+There is three tier component:
+
+Client                                 Server                              Database
+
+Login <-----(username/password)----->         <-Validate User credentials->
+                                              <-Credentials Valid->
+
+
+<----------Issue JWT Token---------->
+
+------API request (JWT Token)------->
+
+                                              ---> Validate Token--|
+                                                            (Stateless)
+Token Valid     
+
+                                              ---Fetch/Store Data-------->
+
+Token Invalid
+<- Invalid Token Response----------->
+
+
+                                              -Validate User Credentials->
+                                              <-Credentials Valid---------
+In session we are making an extra DB 
+call
+
+<-Set session ID cookie--------------
+
+---API Request (Session ID)--------->
+
+                                             -Validate Session ID (Stateful)
+
+Session Valid 
+                                             -Fetch / Store Data ---------->
+-----------------------------------------------------------------------------
+
+Session Invalid
+<-Invalid Session Response----------
+
+                 
